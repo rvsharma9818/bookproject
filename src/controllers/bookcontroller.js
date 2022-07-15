@@ -24,6 +24,7 @@ const createBook = async function (req, res) {
       subcategory,
       releasedAt,
       isDeleted,
+      bookcover
     } = data;
 
     // Validate title
@@ -148,6 +149,7 @@ const createBook = async function (req, res) {
       return res
         .status(403)
         .send({ status: false, message: "Unauthorized Access." });
+        data.bookcover= req.file.location
 
     const savedBook = await bookModel.create(data);
     return res.status(201).send({
@@ -281,20 +283,15 @@ const updatebook = async function (req, res) {
       return res.status(404).send({ status: false, message: "No book found." });
 
     // Authorization
-    const requestUserId = findBook.userId;
-    if (loggedUserId !== requestUserId.toString())
-      return res
-        .status(403)
-        .send({ status: false, message: "Unauthorized access" });
+    // const requestUserId = findBook.userId;
+    // if (loggedUserId !== requestUserId.toString())
+    //   return res
+    //     .status(403)
+    //     .send({ status: false, message: "Unauthorized access" });
 
     // Destructuring
-    const { title, excerpt, releasedAt, ISBN } = dataToUpdate;
-    if (!validation.isValidReqBody(dataToUpdate))
-      return res.status(400).send({
-        status: false,
-        message: "Please enter details you want to update.",
-      });
-
+    const { title, excerpt, releasedAt, ISBN} = dataToUpdate;
+   
     // If title is present
     if (title) {
       if (!validation.isValid(title) || !validation.isValidName(title))
@@ -311,6 +308,7 @@ const updatebook = async function (req, res) {
           .send({ status: false, message: "Title is already present." });
     }
     dataToUpdate["title"] = title;
+    dataToUpdate["bookcover"]=req.file.location;
 
     // If ISBN is present
     if (ISBN) {

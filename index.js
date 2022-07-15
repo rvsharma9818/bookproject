@@ -1,11 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const route = require("./src/routes/route");
-const { default: mongoose } = require("mongoose");
+const mongoose  = require("mongoose");
+const {multererror } =require("./src/Helper/multer")
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+require("dotenv").config({
+  path:'.env'
+})
+
 
 mongoose
   .connect(
@@ -22,7 +27,7 @@ app.use("/", route);
 app.all('/**',route ,(req, res) => {
   res.status(404).send({ status: false, message: "Either Page Not Found Or Missing Some Of The Parameters " })
 })
-
-app.listen(process.env.PORT || 3000, function () {
+app.use(multererror)
+app.listen(process.env.PORT, function () {
   console.log("Express app running on port " + (process.env.PORT || 3000));
 });

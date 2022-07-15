@@ -30,6 +30,9 @@ const userSchema = new mongoose.Schema(
       city: String,
       pincode: String,
     },
+    bookcover:{
+      type:String
+    }
   },
   { timestamps: true }
 );
